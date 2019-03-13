@@ -23,9 +23,13 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
   request = sys.argv[1]
-  args  = sys.argv[2:]
 except:
   request = ""
+
+try:
+  args  = sys.argv[2:]
+except:
+  args = []
 
 def local_request(msg, arg1=None, arg2=None):
   s.connect((LOCAL_IP, LOCAL_PORT))
@@ -61,7 +65,15 @@ def join_(ip=None, port=None):
   s.connect((LOCAL_IP, LOCAL_PORT))
   print('join {} {}'.format(ip, port).encode())
   s.sendall('join {} {}'.format(ip, port).encode())
-  
+
+if os.path.isfile(request):
+  if request[-2:] == 'td' and len(args) == 0:
+    args.insert(0, request) 
+    request = 'pull'
+  elif len(args) == 1:
+    args.insert(0, request)
+    request = 'disperse'
+    
 if request == 'join':
   if len(args) > 1:
     local_request('join', args[0], args[1])

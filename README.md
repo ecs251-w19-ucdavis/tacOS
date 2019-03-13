@@ -16,7 +16,7 @@ Chord works by placing each node on a conceptual ring where their locations are 
 * [Advanced](#advanced)
 
 ## Startup
-The application requires python version 3 or later. All requests within a node will be sent using the client application file taco.py to the node.py server of the same node.
+The application requires python version 3 or later. All requests within a node will be sent using the client application `taco` to the node.py server of the same node.
 ### **On Local**
 
 To start, run `python3 node.py [port]` in the [src/](src/) directory. The port argument is optional, and when omitted will cause the node to listen on the default port 8000. Note that when running on local, you have to provide a different port for each node you plan on running.
@@ -30,10 +30,10 @@ python3 node.py
 python3 node.py 5000
 
 # Pinging the first node
-PORT=8000 python3 taco.py ping
+PORT=8000 python3 taco ping
 
 # Pinging the second node
-PORT=5000 python3 taco.py ping
+PORT=5000 python3 taco ping
 ```
 
 ### **Using Docker**
@@ -53,31 +53,31 @@ docker container ls
 docker container exec -it <container-id> /bin/bash
 
 # Test if the server is running
-./taco.py ping
+./taco ping
 # -> You should get running status with IP and Port on which server is listening
 ```
     
 ## Usage
-Like mentioned earlier, all requests need to be sent via the taco.py file as we will see below.
+Like mentioned earlier, all requests need to be sent via the taco file as we will see below.
 
 The commands shown below are for inside the docker, therefore . If you're running it on a standalone machine, depending on what your python binary is called, you might have to prepend the the `python` word and `PORT` environment variable wherever required as shown in [On Local](#on-local). If each node is running on a seperate machine, you can just export the `PORT` environment variable once.
 
 ### **1. Creating a Ring**
 A node creates a ring for other nodes to join and form a network. No node on the ring is superior to the other.
 ```bash
-./taco.py create_ring
+./taco create_ring
 ```
 
 ### **2. Joining a Ring**
-Other nodes join a ring by requesting a node that is already on the ring. The IP and PORT of the node on the ring is needed to send a request. You can find those details by running `./taco.py ping` on the node that is on the ring.
+Other nodes join a ring by requesting a node that is already on the ring. The IP and PORT of the node on the ring is needed to send a request. You can find those details by running `./taco ping` on the node that is on the ring.
 ```bash
-./taco.py join <IP> <PORT>
+./taco join <IP> <PORT>
 ```
 
 ### **3. Distributing Files**
 Files are distributed accross different nodes on the ring. The distribution takes place by splitting the file into the number of segments specified by the second argument to the disperse command. If no argument is provided, the entire file is sent off to the appropriate node.
 ```bash
-./taco.py disperse <FILE> <NUM OF SEGMENTS>
+./taco disperse <FILE> <NUM OF SEGMENTS>
 ```
 
 After the dispersion/distribution of the file, a `.td` file will be created that can be used to retrieve the distributed file as shown in the next step.
@@ -85,15 +85,15 @@ After the dispersion/distribution of the file, a `.td` file will be created that
 ### **4. Retrieving Files**
 Files are retrieved using `pull` command and the `.td` file corresponding to the file you want to retrieve.
 ```bash
-./taco.py pull <.td FILE>
+./taco pull <.td FILE>
 ```
 
 ## Other Commands
-Other commands you might use for various purposes can be found by typing `./taco.py help`. You can find a few below:
-* get_hash: Get the hashed value/position of the node on the ring.
-* get_successor: Get the IP and PORT of the immediate successor on the ring.
-* get_finger: Get finger table of the node that has a list of successors at exponentially growing distances.
-* get_predecessor: Get the IP and PORT of the immediate predecessor on the ring.
+Other commands you might use for various purposes can be found by typing `./taco help`. You can find a few below:
+* `get_hash`: Get the hashed value/position of the node on the ring.
+* `get_successor`: Get the IP and PORT of the immediate successor on the ring.
+* `get_finger`: Get finger table of the node that has a list of successors at exponentially growing distances.
+* `get_predecessor`: Get the IP and PORT of the immediate predecessor on the ring.
 
 ## Advanced
 The [utils.py](src/utils.py) file has the value of M that decides the number of buckets on the ring, and the various hash functions that can be used for the hashing of files and the nodes. Choosing of appropriate hash functions and M is vital for ideal working of Chord, and may have to chage depending on what the application is being used for. The chosen hash function can be changed by changing the value of `main_func` variable to the name of the available function in the dictionary.
