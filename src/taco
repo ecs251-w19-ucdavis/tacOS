@@ -6,6 +6,7 @@ import math
 from address import Address
 from address import hash_
 from utils import checksum, CACHE_DIR
+from threading import Thread
 
 if not os.path.isdir(CACHE_DIR):
   os.mkdir(CACHE_DIR)
@@ -30,6 +31,10 @@ try:
   args  = sys.argv[2:]
 except:
   args = []
+
+def thread_status(s):
+  print('{}'.format(s.recv(1024).decode('utf-8')))  
+  s.close()
 
 def local_request(msg, arg1=None, arg2=None):
   s.connect((LOCAL_IP, LOCAL_PORT))
@@ -110,6 +115,7 @@ elif request == 'disperse':
     file_ = args[0] # File path
     pfile_ = file_.split('/')[-1:][0] # File name
     n_segments = int(args[1])
+    threads = []
     size = os.stat(file_).st_size
     segment_size = math.floor(size/n_segments)
     for i in range(0, n_segments):
@@ -120,8 +126,14 @@ elif request == 'disperse':
       if i >= n_segments-1:
         n_bytes = size - start
       sock.sendall('send_segment {} {} {} {}'.format(file_, i, start, n_bytes).encode())
-      print('{}/{}'.format(sock.recv(1024).decode('utf-8'), hash_(pfile_+'_'+str(i))))
-      sock.close()
+      t = Thread(target=thread_status, args=(sock,))
+      t.start()
+      threads.append(t)
+      # print('{}/{}'.format(sock.recv(1024).decode('utf-8'), hash_(pfile_+'_'+str(i))))
+    print('waiting...')
+    for th in threads:
+      th.join()
+    # print('waiting...')    
     f = open('./{}.td'.format(pfile_), 'w')
     f.write('{}\n{}\n{}\n{}\n'.format(pfile_, size, n_segments, checksum(file_)))
     f.close()
