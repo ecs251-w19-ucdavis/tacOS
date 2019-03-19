@@ -130,6 +130,22 @@ elif request == 'disperse':
     print("USAGE disperse <file> <number of segments>")
 
 
+# Report an edit of a segment:
+# USAGE: edit <name of edited segment>
+elif request == 'report':
+  if len(args) == 1:
+    segment_name = args[0]
+    segment_size = os.stat(segment_name).st_size
+
+    # Send segment from this node's client-side to its server-side.
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((LOCAL_IP, LOCAL_PORT))
+    sock.sendall('send_segment {} {} {} {} {}'. format(segment_name, None, 0, segment_size, True).encode())
+    sock.close()
+    print('Updated file segment distributed successfully')
+  else:
+    print("USAGE report <name of edited segment>")
+
 elif request == 'ping':
   if len(args) > 1:
     remote_request_s('ping', args[0], args[1])
