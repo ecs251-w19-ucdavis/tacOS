@@ -165,6 +165,7 @@ else:
   print("\t-> join <peer ip> <peer port>")
   print("\t-> disperse <file> <number of segments>")
   print("\t-> pull <td file>")
+  print("\t-> report <segment>")
   print("\t-> stabilize")
   print("\t-> fix_finger")
   print("\t-> get_successor")
