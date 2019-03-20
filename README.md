@@ -90,6 +90,7 @@ Files are retrieved using `pull` command and the `.td` file corresponding to the
 
 ## Other Commands
 Other commands you might use for various purposes can be found by typing `./taco help`. You can find a few below:
+* `report <segment>`: Report an edited segment to other nodes that have that segment.
 * `get_hash`: Get the hashed value/position of the node on the ring.
 * `get_successor`: Get the IP and PORT of the immediate successor on the ring.
 * `get_finger`: Get finger table of the node that has a list of successors at exponentially growing distances.

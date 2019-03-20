@@ -282,10 +282,19 @@ class Worker(Thread):
   def get_finger(self):
     return str(self.state.finger)
 
-  def send_segment(self, file_, seg_id, start, n_bytes):
-    seg_name = '{}_{}'.format(file_.split('/')[-1:][0], seg_id)
+  # If @seg_given, then it is assumed that the entire segment is
+  # in the file indicated by @file_ (rather than a fraction of said file).
+  def send_segment(self, file_, seg_id, start, n_bytes, seg_given=False):
+    if seg_given:  # entire segment (and thus its name) was given
+      seg_name = '{}'.format(file_.split('/',1)[-1])  # strip "cache/" prefix
+    else:  # file is being dispersed, so we must create segment name
+      seg_name = '{}_{}'.format(file_.split('/')[-1:][0], seg_id)
+
+    # Find the chord node in which to store the given segment,
+    # and send a request to that node.
     ip, port = self.find_successor(hash_(seg_name)).split(':')
     s = self.send(Address(ip, port), 'store {} {}'.format(seg_name, n_bytes))
+
     if s.recv(512).decode('utf-8') == 'OK':
       f = open(file_, 'rb+')
       print("sending file...")

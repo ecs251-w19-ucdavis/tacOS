@@ -2,7 +2,8 @@
 FROM python:3.6-slim
 
 RUN apt-get update &&\
-    apt-get install -y curl
+    apt-get install -y curl &&\
+    apt-get install -y vim  # for testing writes
     # apt-get install -y net-tools &&\
     # apt-get install -y iputils-ping &&\
     # apt-get install -y procps &&\
@@ -19,6 +20,9 @@ RUN chmod +x ./taco
 RUN mkdir ./test_files &&\
     curl http://www.effigis.com/wp-content/uploads/2015/02/DigitalGlobe_WorldView2_50cm_8bit_Pansharpened_RGB_DRA_Rome_Italy_2009DEC10_8bits_sub_r_1.jpg \
     -o ./test_files/satellite_image.jpg; exit 0
+
+RUN curl https://aaronistheman.github.io/big-file-test/big-file.txt \
+	-o ./test_files/big-text-file.txt; exit 0
 
 ENV PORT 8000
 
