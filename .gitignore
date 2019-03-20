@@ -5,6 +5,7 @@ cache/
 *.td
 test*.*
 test_files/
+!src/scripts/*
 
 ### Python ###
 __pycache__/
